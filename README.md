@@ -14,7 +14,7 @@ in my `~/.node_libraries` path.
     $ ln -s /path/to/wheres-waldo/lib ~/.node_libraries/wheres-waldo
 
     $ ln -s /path/to/redisclient/redisclient.js   ~/.node_libraries/redisclient/index.js
-    $ ln -s /path/to/underscore/underscore-min.js ~/.node_libraries/redisclient/index.js
+    $ ln -s /path/to/underscore/underscore-min.js ~/.node_libraries/underscore/index.js
 
 ## Usage
 
