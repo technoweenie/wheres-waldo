@@ -37,7 +37,7 @@ describe("custom new waldo instance")
 describe("tracking a user")
   before(function() {
     this.waldo = whereswaldo.create(redis, 'tracking');
-    this.waldo.track('bob', 'gym')
+    this.waldo.track('bob', 'gym').wait()
   })
 
   it("tracks a user's location", function() {
