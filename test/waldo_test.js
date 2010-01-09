@@ -28,9 +28,15 @@ describe("new waldo instance")
     assert.equal(0, users.length)
   })
 
+describe("custom new waldo instance")
+  it('has a custom prefix', function() {
+    waldo = whereswaldo.create(redis, 'custom')
+    assert.equal('custom', waldo.prefix)
+  })
+
 describe("tracking a user")
   before(function() {
-    this.waldo = whereswaldo.create(redis);
+    this.waldo = whereswaldo.create(redis, 'tracking');
     this.waldo.track('bob', 'gym')
   })
 
