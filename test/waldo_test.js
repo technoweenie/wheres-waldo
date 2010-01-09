@@ -20,7 +20,7 @@ describe("new waldo instance")
   })
 
   it('does not know where a user is', function() {
-    assert.ok(!this.waldo.locate('fred'))
+    assert.ok(!this.waldo.locate('fred').wait())
   })
 
   it('returns no users for an empty location', function() {
@@ -41,7 +41,7 @@ describe("tracking a user")
   })
 
   it("tracks a user's location", function() {
-    assert.equal('gym', this.waldo.locate('bob'))
+    assert.equal('gym', this.waldo.locate('bob').wait())
   })
 
   it("lists the user in that location", function() {
