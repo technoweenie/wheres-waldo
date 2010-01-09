@@ -24,7 +24,7 @@ describe("new waldo instance")
   })
 
   it('returns no users for an empty location', function() {
-    var users = this.waldo.list('home');
+    var users = this.waldo.list('home').wait();
     assert.equal(0, users.length)
   })
 
@@ -45,5 +45,5 @@ describe("tracking a user")
   })
 
   it("lists the user in that location", function() {
-    assert.equal('bob', this.waldo.list('gym')[0])
+    assert.equal('bob', this.waldo.list('gym').wait()[0])
   })
