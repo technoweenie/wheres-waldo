@@ -17,3 +17,11 @@ describe("new waldo instance")
   it('sets redis instance', function() {
     assert.equal(this.redis, this.waldo.redis)
   })
+
+  it('does not know where a user is', function() {
+    assert.ok(!this.waldo.locate('bob'))
+  })
+
+  it('returns no users for an empty location', function() {
+    assert.equal([], this.waldo.list('home'))
+  })
