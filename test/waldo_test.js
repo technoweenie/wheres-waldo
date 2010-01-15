@@ -4,7 +4,7 @@ var redisclient = require('redisclient'),
             sys = require('sys'),
           redis = new redisclient.Client();
 
-process.mixin(GLOBAL, require('ntest'))
+process.mixin(GLOBAL, require('ntest'));
 
 describe("new waldo instance")
   before(function() {
