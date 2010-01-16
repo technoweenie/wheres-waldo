@@ -1,7 +1,6 @@
 var redisclient = require('redisclient'),
     whereswaldo = require('../lib'),
          assert = require('assert'),
-           http = require('http'),
        testHttp = require('./test_client'),
             sys = require('sys'),
             api = require('../lib/api');
@@ -19,11 +18,25 @@ waldoServer.addListener('close', function(e) {
   process.exit();
 })
 
-describe("an empty Waldo database")
-  before(function() { redis.flushdb().wait() })
+before(function() { redis.flushdb().wait() })
 
-  it("cannot locate missing user", function() {
-    var resp = client.request("/locate?name=bob").wait();
-    assert.equal('""', resp.body);
-    waldoServer.close();
-  })
+it("cannot locate missing user", function() {
+  var resp = client.request("/locate?name=bob").wait();
+  assert.equal('-', resp.body);
+})
+
+it("lists empty location", function() {
+  var resp = client.request("/list?location=gym").wait();
+  assert.equal('[]', resp.body);
+})
+
+it("tracks user's location", function() {
+  client.request("/track?name=bob&location=gym").wait()
+  var resp = client.request("/locate?name=bob").wait();
+  assert.equal('gym', resp.body);
+
+  var resp = client.request("/list?location=gym").wait();
+  assert.equal('["bob"]', resp.body);
+})
+
+waldoServer.close();
