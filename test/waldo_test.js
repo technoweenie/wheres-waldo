@@ -55,5 +55,20 @@ describe("tracking a user")
     assert.equal('fred', users[1])
   })
 
+  it("expires a user's location after a set time", function() {
+    trackingWaldo.age = 1
+
+    assert.equal(0, trackingWaldo.list('home').wait().length)
+    trackingWaldo.track('todd', 'home').wait()
+    assert.equal(1, trackingWaldo.list('home').wait().length)
+
+    var p = new process.Promise()
+    setTimeout(function() {
+      assert.equal(0, trackingWaldo.list('home').wait().length)
+      p.emitSuccess()
+    }, 2000)
+    p.wait()
+  })
+
 process.exit()
   
