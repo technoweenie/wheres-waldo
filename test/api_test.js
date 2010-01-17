@@ -20,6 +20,11 @@ waldoServer.addListener('close', function(e) {
 
 before(function() { redis.flushdb().wait() })
 
+it('handles bad 404 requests', function() {
+  var resp = client.request("/").wait()
+  assert.equal(404, resp.statusCode)
+})
+
 it("cannot locate missing user", function() {
   var resp = client.request("/locate?name=bob").wait();
   assert.equal('-', resp.body);
