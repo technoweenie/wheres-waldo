@@ -2,6 +2,7 @@ var redisclient = require('redisclient'),
     whereswaldo = require('../lib'),
          assert = require('assert'),
        testHttp = require('./helpers/test_client'),
+       promises = require('./lib/promise-group')
       listeners = require('./helpers/temp_listeners')
             sys = require('sys'),
             api = require('../lib/api');
@@ -56,8 +57,14 @@ it('ignores invalid list request', function() {
 })
 
 it('ignores invalid track request', function() {
-  var resp = client.request("/track").wait();
-  assert.equal('""', resp.body);
+  promise = promises.group(
+    client.request("/track"),
+    client.request("/track?name=1"),
+    client.request("/track?location=1"))
+  var resps = promise.wait()
+  resps.forEach(function(resp) {
+    assert.equal('false', resp.body)
+  })
 })
 
 it('wraps locate request in callback', function() {
@@ -72,7 +79,7 @@ it('wraps list request in callback', function() {
 
 it('wraps track request in callback', function() {
   var resp = client.request("/track?callback=foo").wait();
-  assert.equal('foo("")', resp.body);
+  assert.equal('foo(false)', resp.body);
 })
 
 it('emits request event', function() {
