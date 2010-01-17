@@ -20,6 +20,25 @@ waldoServer.addListener('close', function(e) {
 
 before(function() { redis.flushdb().wait() })
 
+it("cannot locate missing user", function() {
+  var resp = client.request("/locate?name=bob").wait();
+  assert.equal('""', resp.body);
+})
+
+it("lists empty location", function() {
+  var resp = client.request("/list?location=gym").wait();
+  assert.equal('[]', resp.body);
+})
+
+it("tracks user's location", function() {
+  client.request("/track?name=bob&location=gym").wait()
+  var resp = client.request("/locate?name=bob").wait();
+  assert.equal('"gym"', resp.body);
+
+  var resp = client.request("/list?location=gym").wait();
+  assert.equal('["bob"]', resp.body);
+})
+
 it('handles bad 404 requests', function() {
   var resp = client.request("/").wait()
   assert.equal(404, resp.statusCode)
@@ -38,25 +57,6 @@ it('ignores invalid list request', function() {
 it('ignores invalid track request', function() {
   var resp = client.request("/track").wait();
   assert.equal('""', resp.body);
-})
-
-it("cannot locate missing user", function() {
-  var resp = client.request("/locate?name=bob").wait();
-  assert.equal('""', resp.body);
-})
-
-it("lists empty location", function() {
-  var resp = client.request("/list?location=gym").wait();
-  assert.equal('[]', resp.body);
-})
-
-it("tracks user's location", function() {
-  client.request("/track?name=bob&location=gym").wait()
-  var resp = client.request("/locate?name=bob").wait();
-  assert.equal('"gym"', resp.body);
-
-  var resp = client.request("/list?location=gym").wait();
-  assert.equal('["bob"]', resp.body);
 })
 
 waldoServer.close();
