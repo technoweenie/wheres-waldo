@@ -11,7 +11,7 @@ var    PORT = 8889,
       redis = new redisclient.Client(),
       waldo = whereswaldo.create(redis),
      client = testHttp.createClient(PORT),
-waldoServer = api.create(waldo);
+waldoServer = api.createServer(waldo);
 waldoServer.listen(PORT);
 
 waldoServer.addListener('close', function(e) {
