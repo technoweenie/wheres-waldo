@@ -41,6 +41,12 @@ it("tracks user's location", function() {
   assert.equal('["bob"]', resp.body);
 })
 
+it("tracks a user and lists users for that location", function() {
+  client.request("/track?name=thing1&location=hat").wait()
+  var resp = client.request("/track_and_list?name=thing2&location=hat").wait()
+  assert.equal('["thing1","thing2"]', resp.body)
+})
+
 it('handles bad 404 requests', function() {
   var resp = client.request("/").wait()
   assert.equal(404, resp.statusCode)
@@ -53,6 +59,11 @@ it('ignores invalid locate request', function() {
 
 it('ignores invalid list request', function() {
   var resp = client.request("/list").wait();
+  assert.equal('""', resp.body);
+})
+
+it('ignores invalid track_and_list request', function() {
+  var resp = client.request("/track_and_list").wait();
   assert.equal('""', resp.body);
 })
 
@@ -74,6 +85,11 @@ it('wraps locate request in callback', function() {
 
 it('wraps list request in callback', function() {
   var resp = client.request("/list?callback=foo").wait();
+  assert.equal('foo("")', resp.body);
+})
+
+it('wraps track_and_list request in callback', function() {
+  var resp = client.request("/track_and_list?callback=foo").wait();
   assert.equal('foo("")', resp.body);
 })
 
