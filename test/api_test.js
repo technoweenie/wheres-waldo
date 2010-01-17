@@ -60,6 +60,21 @@ it('ignores invalid track request', function() {
   assert.equal('""', resp.body);
 })
 
+it('wraps locate request in callback', function() {
+  var resp = client.request("/locate?callback=foo").wait();
+  assert.equal('foo("")', resp.body);
+})
+
+it('wraps list request in callback', function() {
+  var resp = client.request("/list?callback=foo").wait();
+  assert.equal('foo("")', resp.body);
+})
+
+it('wraps track request in callback', function() {
+  var resp = client.request("/track?callback=foo").wait();
+  assert.equal('foo("")', resp.body);
+})
+
 it('emits request event', function() {
   promise = listeners.wrap(waldoServer, 'request', function(r, s) {
     assert.equal('/foo', r.url)
