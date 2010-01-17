@@ -1,7 +1,8 @@
 var redisclient = require('redisclient'),
     whereswaldo = require('../lib'),
          assert = require('assert'),
-       testHttp = require('./test_client'),
+       testHttp = require('./helpers/test_client'),
+      listeners = require('./helpers/temp_listeners')
             sys = require('sys'),
             api = require('../lib/api');
 
@@ -14,7 +15,7 @@ var    PORT = 8889,
 waldoServer = api.createServer(waldo);
 waldoServer.listen(PORT);
 
-waldoServer.addListener('close', function(e) {
+waldoServer.server.addListener('close', function(e) {
   process.exit();
 })
 
@@ -57,6 +58,47 @@ it('ignores invalid list request', function() {
 it('ignores invalid track request', function() {
   var resp = client.request("/track").wait();
   assert.equal('""', resp.body);
+})
+
+it('emits request event', function() {
+  promise = listeners.wrap(waldoServer, 'request', function(r) {
+    assert.equal('/foo', r.url)
+    promise.emitSuccess()
+  })
+  client.request("/foo")
+  promise.wait()
+})
+
+it('emits track event', function() {
+  promise = listeners.wrap(waldoServer, 'track', function(user, location) {
+    assert.equal('mark', user)
+    assert.equal('work', location)
+    promise.emitSuccess()
+  })
+  client.request("/track?name=mark&location=work")
+  promise.wait()
+})
+
+it('emits locate event', function() {
+  client.request("/track?name=mark&location=work")
+  promise = listeners.wrap(waldoServer, 'locate', function(user, location) {
+    assert.equal('mark', user)
+    assert.equal('work', location)
+    promise.emitSuccess()
+  })
+  client.request("/locate?name=mark")
+  promise.wait()
+})
+
+it('emits list event', function() {
+  client.request("/track?name=mark&location=work")
+  promise = listeners.wrap(waldoServer, 'list', function(location, users) {
+    assert.equal('mark', users[0])
+    assert.equal('work', location)
+    promise.emitSuccess()
+  })
+  client.request("/list?location=work")
+  promise.wait()
 })
 
 waldoServer.close();
