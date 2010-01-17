@@ -61,8 +61,9 @@ it('ignores invalid track request', function() {
 })
 
 it('emits request event', function() {
-  promise = listeners.wrap(waldoServer, 'request', function(r) {
+  promise = listeners.wrap(waldoServer, 'request', function(r, s) {
     assert.equal('/foo', r.url)
+    assert.equal(404, s)
     promise.emitSuccess()
   })
   client.request("/foo")
