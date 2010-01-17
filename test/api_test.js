@@ -27,22 +27,22 @@ it('handles bad 404 requests', function() {
 
 it('ignores invalid locate request', function() {
   var resp = client.request("/locate").wait();
-  assert.equal(' ', resp.body);
+  assert.equal('""', resp.body);
 })
 
 it('ignores invalid list request', function() {
   var resp = client.request("/list").wait();
-  assert.equal(' ', resp.body);
+  assert.equal('""', resp.body);
 })
 
 it('ignores invalid track request', function() {
   var resp = client.request("/track").wait();
-  assert.equal(' ', resp.body);
+  assert.equal('""', resp.body);
 })
 
 it("cannot locate missing user", function() {
   var resp = client.request("/locate?name=bob").wait();
-  assert.equal(' ', resp.body);
+  assert.equal('""', resp.body);
 })
 
 it("lists empty location", function() {
@@ -53,7 +53,7 @@ it("lists empty location", function() {
 it("tracks user's location", function() {
   client.request("/track?name=bob&location=gym").wait()
   var resp = client.request("/locate?name=bob").wait();
-  assert.equal('gym', resp.body);
+  assert.equal('"gym"', resp.body);
 
   var resp = client.request("/list?location=gym").wait();
   assert.equal('["bob"]', resp.body);
