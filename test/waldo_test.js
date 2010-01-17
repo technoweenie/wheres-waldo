@@ -1,30 +1,30 @@
 var redisclient = require('redisclient'),
     whereswaldo = require('../lib'),
+       promises = require('../lib/promise-group'),
          assert = require('assert'),
             sys = require('sys'),
           redis = new redisclient.Client();
 
 process.mixin(GLOBAL, require('ntest'));
+redis.flushdb().wait()
 
 describe("new waldo instance")
-  before(function() {
-    this.waldo = whereswaldo.create(redis);
-  })
+  newWaldo = whereswaldo.create(redis);
 
   it("has a default prefix", function() {
-    assert.equal('waldo', this.waldo.prefix)
+    assert.equal('waldo', newWaldo.prefix)
   })
 
   it('sets redis instance', function() {
-    assert.equal(redis, this.waldo.redis)
+    assert.equal(redis, newWaldo.redis)
   })
 
   it('does not know where a user is', function() {
-    assert.ok(!this.waldo.locate('fred').wait())
+    assert.ok(!newWaldo.locate('fred').wait())
   })
 
   it('returns no users for an empty location', function() {
-    var users = this.waldo.list('home').wait();
+    var users = newWaldo.list('home').wait();
     assert.equal(0, users.length)
   })
 
@@ -35,15 +35,25 @@ describe("custom new waldo instance")
   })
 
 describe("tracking a user")
-  before(function() {
-    this.waldo = whereswaldo.create(redis, 'tracking');
-    this.waldo.track('bob', 'gym').wait()
-  })
+  trackingWaldo = whereswaldo.create(redis, 'tracking')
+  trackingWaldo.track('fred', 'home').wait()
+  trackingWaldo.track('bob',  'gym').wait()
+  trackingWaldo.track('fred', 'gym').wait()
 
   it("tracks a user's location", function() {
-    assert.equal('gym', this.waldo.locate('bob').wait())
+    assert.equal('gym', trackingWaldo.locate('bob').wait())
+  })
+
+  it("updates a user's location", function() {
+    assert.equal('gym', trackingWaldo.locate('fred').wait())
+    assert.equal(0, trackingWaldo.list('home').wait().length)
   })
 
   it("lists the user in that location", function() {
-    assert.equal('bob', this.waldo.list('gym').wait()[0])
+    users = trackingWaldo.list('gym').wait()
+    assert.equal('bob',  users[0])
+    assert.equal('fred', users[1])
   })
+
+process.exit()
+  
