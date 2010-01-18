@@ -18,7 +18,14 @@ in my `~/.node_libraries` path.
 
 ## Usage
 
-nfi, seriously.
+Display a list of users that are visiting a certain page.  Using a snippet of [javascript at the bottom of your site](http://gist.github.com/279689), you can end up with something like this:
+
+![screenshot of user list](http://img.skitch.com/20100118-py3rmqkfw51d4ra6im7ump6wyk.png)
+
+## TODO
+
+* HMAC URL authentication
+* Ability to store json data per user instead of just a name or ID
 
 ## Copyright
 
